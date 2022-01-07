@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const routesUsers = require('./routes/users');
 const routesLists = require('./routes/lists');
 const routesLogs = require('./routes/logs');
+const routesAdmins = require('./routes/admins');
 
 const app = express();
 
@@ -33,3 +34,4 @@ app.use((req, res, next) => {
 app.use('/', routesUsers);
 app.use('/', routesLists);
 app.use('/', routesLogs);
+app.use('/', routesAdmins);
