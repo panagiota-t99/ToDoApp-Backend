@@ -65,6 +65,14 @@ deleteList = (req, res) => {
                 return res.status(500).json(err.message);
 
             }
+            connection.query("DELETE FROM todolists WHERE listid = ?",
+                [req.params.listid],
+                (err, results) => {
+                    if (err) {
+                        console.log("error: ", err);
+                        return res.status(500).json(err.message);
+                    } else return;
+            });
             let message = "User deleted list"
             connection.query("INSERT INTO logs (userid, message, action) VALUES (?,?, 'DELETE')",
                 [req.id, message],
