@@ -48,7 +48,6 @@ findAllUsers = (req, res) => {
                 console.log("error: ", err);
                 return res.status(500).json(err.message);
             }
-            console.log(results);
             return res.status(200).json(results);
         });
 }
@@ -134,27 +133,33 @@ deleteUser = (req, res) => {
             } else
                 connection.query("DELETE todolists,todoitems FROM todolists INNER JOIN todoitems ON todoitems.listid = todolists.listid WHERE todolists.userid = ?",
                     [user],
-                    (err, results) => {
+                    (err, results1) => {
                         if (err) {
                             console.log("error: ", err);
                             return res.status(500).json(err.message);
                         } else
                             connection.query("DELETE  FROM todolists  WHERE userid = ?",
                                 [user],
-                                (err, results) => {
+                                (err, results2) => {
                                     if (err) {
                                         console.log("error: ", err);
                                         return res.status(500).json(err.message);
                                     } else
-                                        return;
+                                        connection.query("DELETE FROM roles WHERE userid = ?",
+                                            [user],
+                                            (err, results3) => {
+                                                if (err) {
+                                                    console.log("error: ", err);
+                                                    return res.status(500).json(err.message);
+                                                } else
+                                                    return;
+                                        });
                                 });
-                            return;
+                        return;
                     });
 
             return res.status(200).json(results);
         })
-
-
 };
 
 

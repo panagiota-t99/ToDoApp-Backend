@@ -21,9 +21,9 @@ updateListName = (req, res) => {
                 return res.status(500).json(err.message);
             }
 
-            let message = "User edited list name (id: " + req.body.listid + ")";
-            connection.query("INSERT INTO logs (userid, message, action) VALUES (?,?, 'UPDATE')",
-                [req.id, message],
+            let message = "User edited list name (id: " + req.body.listid + ", name: " + req.body.listname + ")";
+            connection.query("INSERT INTO logs (userid, message, action,id,name) VALUES (?,?, 'UPDATE',?,?)",
+                [req.id, message,req.body.listid,req.body.listname],
                 (err, res_logs) => {
                     if (err) {
                         console.log("error: ", err);
@@ -43,9 +43,9 @@ updateItemName = (req, res) => {
                 return res.status(500).json(err.message);
             }
 
-            let message = "User edited item name (id: " + req.body.itemsid + ")";
-            connection.query("INSERT INTO logs (userid, message, action) VALUES (?,?, 'UPDATE')",
-                [req.id, message],
+            let message = "User edited item name (id: " + req.body.itemsid + ", name: " + req.body.itemname + ") in list (name:" + req.body.listname + ")";
+            connection.query("INSERT INTO logs (userid, message, action,id,name) VALUES (?,?, 'UPDATE',?,?)",
+                [req.id, message,req.body.itemsid,req.body.itemname],
                 (err, res_logs) => {
                     if (err) {
                         console.log("error: ", err);
@@ -121,8 +121,9 @@ addList = (req, res) => {
                 return res.status(500).json(err.message);
             }
             let message = "User added list (name:" + req.body.listname + ")";
-            connection.query("INSERT INTO logs (userid, message, action) VALUES (?,?, 'ADD')",
-                [req.id, message],
+            console.log(results);
+            connection.query("INSERT INTO logs (userid, message, action,id,name) VALUES (?,?, 'ADD',?,?)",
+                [req.id, message,results.insertId,req.body.listname],
                 (err, results2) => {
                     if (err) {
                         console.log("error: ", err);
@@ -143,9 +144,9 @@ addItem = (req, res) => {
                 console.log("error: ", err);
                 return res.status(500).json(err.message);
             }
-            let message = "User added item (name:" + req.body.itemname + ") to list (id:" + req.body.id + ")";
-            connection.query("INSERT INTO logs (userid, message, action) VALUES (?,?, 'ADD')",
-                [req.id, message],
+            let message = "User added item (name:" + req.body.itemname + ") to list (name:" + req.body.listname + ")";
+            connection.query("INSERT INTO logs (userid, message, action,id,name) VALUES (?,?, 'ADD',?,?)",
+                [req.id, message,results.insertId,req.body.itemname],
                 (err, results2) => {
                     if (err) {
                         console.log("error: ", err);
