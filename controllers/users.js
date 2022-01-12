@@ -14,7 +14,7 @@ findUser = (req, res) => {
                 const accessToken = jwt.sign(results[0].id, process.env.ACCESS_TOKEN_SECRET);
                 return res.status(200).json({"accessToken": accessToken});
             }
-            return res.status(404).json({});
+            return res.status(404).json({"message": "User not found!"});
         });
 };
 
