@@ -1,7 +1,7 @@
 const connection = require("../services/db.js");
 
 findAllItems = (req, res) => {
-    connection.query("SELECT itemname,itemsid,todoitems.dateCreated,todoitems.dateModified FROM todoitems,todolists WHERE todolists.listid = ? AND todoitems.listid = todolists.listid",
+    connection.query("SELECT itemname,itemsid,todoitems.dateCreated,todoitems.dateModified,reminder FROM todoitems,todolists WHERE todolists.listid = ? AND todoitems.listid = todolists.listid",
         [req.params.listid], (err, results) => {
             if (err) {
                 console.log("error: ", err);
@@ -56,6 +56,18 @@ updateItemName = (req, res) => {
         });
 };
 
+updateReminder = (req, res) => {
+    connection.query("UPDATE todoitems SET reminder = ? WHERE itemsid = ?",
+        [req.body.reminder, req.body.itemsid],
+        (err, results) => {
+            if (err) {
+                console.log("error: ", err);
+                return res.status(500).json(err.message);
+            }
+            return res.status(200).json(results);
+        });
+};
+
 deleteList = (req, res) => {
     connection.query("DELETE todolists,todoitems FROM todolists INNER JOIN todoitems ON todoitems.listid = todolists.listid AND todolists.listid = ?",
         [req.params.listid],
@@ -73,9 +85,9 @@ deleteList = (req, res) => {
                         return res.status(500).json(err.message);
                     } else return;
             });
-            let message = "User deleted list"
-            connection.query("INSERT INTO logs (userid, message, action) VALUES (?,?, 'DELETE')",
-                [req.id, message],
+            let message = "User deleted list (name: " + req.params.listname + ')';
+            connection.query("INSERT INTO logs (userid, message, action,id,name) VALUES (?,?, 'DELETE',?,?)",
+                [req.id, message, req.params.listid, req.params.listname],
                 (err, results3) => {
                     if (err) {
                         console.log("error: ", err);
@@ -97,9 +109,9 @@ deleteItem = (req, res) => {
                 return res.status(500).json(err.message);
 
             }
-            let message = "User deleted item"
-            connection.query("INSERT INTO logs (userid, message, action) VALUES (?,?, 'DELETE')",
-                [req.id, message],
+            let message = "User deleted item (name: " + req.params.itemname + ")";
+            connection.query("INSERT INTO logs (userid, message, action,id,name) VALUES (?,?, 'DELETE',?,?)",
+                [req.id, message,req.params.itemsid, req.params.itemname],
                 (err, results2) => {
                     if (err) {
                         console.log("error: ", err);
@@ -110,6 +122,19 @@ deleteItem = (req, res) => {
                 });
         });
 };
+
+deleteReminder = (req, res) => {
+    connection.query("UPDATE todoitems SET reminder = null WHERE itemsid = ?",
+        [req.body.itemsid],
+        (err, results) => {
+            if (err) {
+                console.log("error: ", err);
+                return res.status(500).json(err.message);
+            }
+            return res.status(200).json(results);
+        });
+};
+
 
 addList = (req, res) => {
 
@@ -157,4 +182,4 @@ addItem = (req, res) => {
         });
 };
 
-module.exports = {findAllItems, updateListName, updateItemName, deleteList, deleteItem, addList, addItem};
+module.exports = {findAllItems, updateListName, updateItemName, deleteList, deleteItem, addList, addItem, updateReminder, deleteReminder};

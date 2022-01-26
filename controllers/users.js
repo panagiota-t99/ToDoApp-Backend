@@ -30,6 +30,18 @@ findAllLists = (req, res) => {
         });
 };
 
+findUsername = (req, res) => {
+    connection.query("SELECT username FROM users WHERE id = ?",
+        [req.id],
+        (err, results) => {
+            if (err) {
+                console.log("error: ", err);
+                return res.status(500).json(err.message);
+            }
+            return res.status(200).json(results);
+        });
+};
+
 findRole = (req, res) => {
     connection.query("SELECT * FROM roles WHERE userid = ?", [req.id],
         (err, results) => {
@@ -163,6 +175,6 @@ deleteUser = (req, res) => {
 };
 
 
-module.exports = {findUser, findAllUsers, findAllLists, addUser, findRole, updateUser, deleteUser};
+module.exports = {findUser, findAllUsers, findAllLists, addUser, findRole, updateUser, deleteUser, findUsername};
 
 
